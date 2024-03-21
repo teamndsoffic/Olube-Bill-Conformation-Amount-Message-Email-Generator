@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olube Bill Conformation Amount Message Email Generator</title>
+    <link rel="icon" href="NDS_Logo_Transparent.png" type="image/png"> <!-- Adding the favicon for SEO -->
+    <link rel="apple-touch-icon" sizes="180x180" href="NDS_Logo_Transparent.png"> <!-- Adding the Apple touch icon for SEO -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #emailResult {
+            display: none;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #emailContent {
+            white-space: pre-line;
+        }
+        video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        footer {
+            background-color: #0850d4;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .warning {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <video autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="container">
+        <h1>Olube Bill Conformation Amount Message Email Generator</h1>
+        <form id="debitForm">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" name="customerName" required><br><br>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required><br><br>
+            <button type="submit">Generate Email</button>
+            <p id="warning" class="warning" style="display:none;">Please fill all details</p>
+        </form>
+
+        <div id="emailResult">
+            <h2>Email Preview:</h2>
+            <p id="emailContent"></p>
+            <button id="copyButton" onclick="copyToClipboard()">Copy to Clipboard</button>
+        </div>
+    </div>
+
+    <footer>Made With ❤️ By NDS Payments Corp.</footer>
+
+    <script>
+        function generateInvoiceNumber() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let invoiceNumber = 'OLU';
+            for (let i = 0; i < 5; i++) {
+                invoiceNumber += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            invoiceNumber += 'BE';
+            return invoiceNumber;
+        }
+
+        document.getElementById("debitForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var customerName = document.getElementById("customerName").value;
+            var amount = document.getElementById("amount").value;
+
+            if (customerName === '' || amount === '') {
+                document.getElementById("warning").style.display = "block";
+                return;
+            } else {
+                document.getElementById("warning").style.display = "none";
+            }
+
+            var invoiceNumber = generateInvoiceNumber();
+
+            var emailContent = `Subject: Receipt Confirmation: Payment Received Successfully\n\n`;
+            emailContent += `Hi ${customerName},\n\n`;
+            emailContent += `We hope you're doing well.\n\n`;
+            emailContent += `We're pleased to inform you that we have successfully received your payment of Rs.${amount} for your recent purchase from Olube. Thank you for your prompt payment.\n\n`;
+            emailContent += `Your account has been updated accordingly. Your invoice number for this transaction is: ${invoiceNumber}. If you have any questions or need further assistance, feel free to reach out to us.\n\n`;
+            emailContent += `Once again, we appreciate your business and look forward to serving you in the future.\n\n`;
+            emailContent += `Best regards,\nOlube Team 🌟`;
+
+            document.getElementById("emailContent").innerText = emailContent;
+            document.getElementById("emailResult").style.display = "block";
+        });
+
+        function copyToClipboard() {
+            var emailContent = document.getElementById("emailContent").innerText;
+
+            navigator.clipboard.writeText(emailContent)
+                .then(function() {
+                    var copyButton = document.getElementById("copyButton");
+                    copyButton.innerText = "Copied!";
+                    setTimeout(function () {
+                        copyButton.innerText = "Copy to Clipboard";
+                    }, 2000); // Reset button text after 2 seconds
+                })
+                .catch(function(error) {
+                    console.error('Failed to copy: ', error);
+                });
+        }
+    </script>
+</body>
+</html>
