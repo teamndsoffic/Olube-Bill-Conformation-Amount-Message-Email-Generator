@@ -4,110 +4,134 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Olube Bill Conformation Amount Message Email Generator</title>
-    <link rel="icon" href="NDS_Logo_Transparent.png" type="image/png"> <!-- Adding the favicon for SEO -->
-    <link rel="apple-touch-icon" sizes="180x180" href="NDS_Logo_Transparent.png"> <!-- Adding the Apple touch icon for SEO -->
+    <title>Olube Bill Confirmation Amount Message Email Generator</title>
+    <link rel="icon" href="NDS_Logo_Transparent.png" type="image/png">
+    <link rel="apple-touch-icon" sizes="180x180" href="NDS_Logo_Transparent.png">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
         }
         .container {
+            width: 90%;
             max-width: 600px;
-            margin: 20px auto;
+            margin: auto;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
         h1 {
-            text-align: center;
+            font-size: 22px;
             margin-bottom: 20px;
         }
-        form {
-            margin-bottom: 20px;
-        }
-        label {
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="number"],
-        button {
+        input {
             width: 100%;
             padding: 10px;
-            margin-bottom: 10px;
+            margin: 5px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box;
         }
         button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
             background-color: #007bff;
             color: #fff;
             cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
         }
+        /* Animation for Generate Email Button */
         button:hover {
             background-color: #0056b3;
-        }
-        #emailResult {
-            display: none;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        #emailContent {
-            white-space: pre-line;
-        }
-        video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-        footer {
-            background-color: #0850d4;
-            color: #fff;
-            text-align: center;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            transform: scale(1.05);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
         }
         .warning {
             color: red;
+            display: none;
+        }
+        #emailResult {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .copy-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        /* Animation for Copy Buttons */
+        .copy-buttons button {
+            flex: 1;
+            transition: all 0.3s ease-in-out;
+        }
+        .copy-buttons button:hover {
+            background-color: #28a745;
+            transform: scale(1.1);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <video autoplay loop muted playsinline>
-        <source src="background.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+    <div class="content">
+        <div class="container">
+            <h1>Olube Bill Confirmation Amount Message Email Generator</h1>
+            <form id="debitForm">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" name="customerName" required><br>
+                <label for="amount">Amount:</label>
+                <input type="number" id="amount" name="amount" required><br>
+                <button type="submit">Generate Email</button>
+                <p id="warning" class="warning">Please fill all details</p>
+            </form>
 
-    <div class="container">
-        <h1>Olube Bill Conformation Amount Message Email Generator</h1>
-        <form id="debitForm">
-            <label for="customerName">Customer Name:</label>
-            <input type="text" id="customerName" name="customerName" required><br><br>
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" required><br><br>
-            <button type="submit">Generate Email</button>
-            <p id="warning" class="warning" style="display:none;">Please fill all details</p>
-        </form>
-
-        <div id="emailResult">
-            <h2>Email Preview:</h2>
-            <p id="emailContent"></p>
-            <button id="copyButton" onclick="copyToClipboard()">Copy to Clipboard</button>
+            <div id="emailResult">
+                <h2>Email Preview:</h2>
+                <p><strong>Subject:</strong> <span id="emailSubject"></span></p>
+                <div class="copy-buttons">
+                    <button onclick="copySubject()">Copy Subject</button>
+                    <button onclick="copyBody()">Copy Body</button>
+                </div>
+                <p id="emailContent"></p>
+            </div>
         </div>
     </div>
 
-    <footer>Made With ❤️ By NDS Payments Corp.</footer>
+    <footer>© 2025 iStore NDS. All rights reserved.</footer>
 
     <script>
         function generateInvoiceNumber() {
@@ -133,34 +157,29 @@
             }
 
             var invoiceNumber = generateInvoiceNumber();
+            var subject = "Receipt Confirmation: Payment Received Successfully";
+            var emailBody = `Hi ${customerName},\n\n` +
+                            `We hope you're doing well.\n\n` +
+                            `We're pleased to inform you that we have successfully received your payment of Rs.${amount} for your recent purchase from Olube. Thank you for your prompt payment.\n\n` +
+                            `Your account has been updated accordingly. Your invoice number for this transaction is: ${invoiceNumber}. If you have any questions or need further assistance, feel free to reach out to us.\n\n` +
+                            `Once again, we appreciate your business and look forward to serving you in the future.\n\n` +
+                            `Best regards,\nOlube Team 🌟`;
 
-            var emailContent = `Subject: Receipt Confirmation: Payment Received Successfully\n\n`;
-            emailContent += `Hi ${customerName},\n\n`;
-            emailContent += `We hope you're doing well.\n\n`;
-            emailContent += `We're pleased to inform you that we have successfully received your payment of Rs.${amount} for your recent purchase from Olube. Thank you for your prompt payment.\n\n`;
-            emailContent += `Your account has been updated accordingly. Your invoice number for this transaction is: ${invoiceNumber}. If you have any questions or need further assistance, feel free to reach out to us.\n\n`;
-            emailContent += `Once again, we appreciate your business and look forward to serving you in the future.\n\n`;
-            emailContent += `Best regards,\nOlube Team 🌟`;
-
-            document.getElementById("emailContent").innerText = emailContent;
+            document.getElementById("emailSubject").innerText = subject;
+            document.getElementById("emailContent").innerText = emailBody;
             document.getElementById("emailResult").style.display = "block";
         });
 
-        function copyToClipboard() {
-            var emailContent = document.getElementById("emailContent").innerText;
+        function copySubject() {
+            var subject = document.getElementById("emailSubject").innerText;
+            navigator.clipboard.writeText(subject).then(() => alert("Subject copied!"));
+        }
 
-            navigator.clipboard.writeText(emailContent)
-                .then(function() {
-                    var copyButton = document.getElementById("copyButton");
-                    copyButton.innerText = "Copied!";
-                    setTimeout(function () {
-                        copyButton.innerText = "Copy to Clipboard";
-                    }, 2000); // Reset button text after 2 seconds
-                })
-                .catch(function(error) {
-                    console.error('Failed to copy: ', error);
-                });
+        function copyBody() {
+            var emailBody = document.getElementById("emailContent").innerText;
+            navigator.clipboard.writeText(emailBody).then(() => alert("Email body copied!"));
         }
     </script>
+
 </body>
 </html>
