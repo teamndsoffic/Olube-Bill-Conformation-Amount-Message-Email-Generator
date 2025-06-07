@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olube Bill Confirmation Generator</title>
+    <link rel="icon" href="NDS_Logo_Transparent.png" type="image/png">
+    <link rel="apple-touch-icon" sizes="180x180" href="NDS_Logo_Transparent.png">
+    
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Confetti library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #2196F3;  /* Blue 500 */
+            --primary-light: #64B5F6;  /* Blue 300 */
+            --secondary: #1976D2;  /* Blue 700 */
+            --success: #4CAF50;  /* Green 500 */
+            --warning: #FF5252;  /* Red A200 */
+            --dark: #212121;  /* Grey 900 */
+            --light: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.96);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--dark);
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('background.png') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            opacity: 0.15;
+            filter: brightness(0.8);
+        }
+        
+        /* Main container */
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeSlideUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        @keyframes fadeSlideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 3px;
+        }
+        
+        /* Form elements */
+        .form-group {
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.6s forwards;
+        }
+        
+        .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .form-group:nth-child(2) { animation-delay: 0.3s; }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .input-field {
+            position: relative;
+        }
+        
+        .input-field i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 16px;
+        }
+        
+        input[type="text"], 
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+            outline: none;
+            background-color: white;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(33, 150, 243, 0.1);
+        }
+        
+        /* Email preview */
+        .email-preview {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        .email-preview.show {
+            opacity: 1;
+            max-height: 1000px;
+            margin-top: 20px;
+        }
+        
+        .email-preview h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .email-preview-content {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+        
+        .email-preview-footer {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Warning message */
+        .warning-message {
+            color: var(--warning);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .warning-message.show {
+            display: block;
+            animation: shake 0.4s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Copy success animation */
+        .copy-success {
+            animation: copySuccess 0.8s ease;
+        }
+        
+        @keyframes copySuccess {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* Refresh button */
+        .refresh-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            color: var(--primary);
+            transform: rotate(180deg);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+            opacity: 0;
+            animation: fadeIn 0.6s forwards 0.8s;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .main-container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    <div class="main-container">
+        <button class="refresh-btn" id="refreshButton" title="Refresh form">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+        
+        <div class="header">
+            <h1>Olube Bill Confirmation Generator</h1>
+            <p>Create professional payment confirmation emails</p>
+        </div>
+        
+        <form id="olubeForm">
+            <div class="form-group">
+                <label for="customerName">Customer Name</label>
+                <div class="input-field">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="customerName" class="form-control" placeholder="Enter customer name" required>
+                </div>
+                <div id="nameWarning" class="warning-message">Please enter customer name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Payment Amount (₹)</label>
+                <div class="input-field">
+                    <i class="fas fa-rupee-sign"></i>
+                    <input type="number" id="amount" class="form-control" placeholder="Enter amount" required>
+                </div>
+                <div id="amountWarning" class="warning-message">Please enter valid amount</div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary" id="generateButton">
+                    <i class="fas fa-envelope"></i> Generate Email
+                </button>
+            </div>
+        </form>
+
+        <div class="email-preview" id="emailPreview">
+            <h3>Email Preview</h3>
+            <p><strong>Subject:</strong> <span id="emailSubject"></span></p>
+            <div class="email-preview-content" id="emailContent"></div>
+            <div class="email-preview-footer">
+                <button id="copySubjectButton" class="btn btn-outline">
+                    <i class="far fa-copy"></i> Copy Subject
+                </button>
+                <button id="copyButton" class="btn btn-outline">
+                    <i class="far fa-copy"></i> Copy Body
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            © 2025 iStore NDS. All rights reserved.
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <script>
+        // Set current year in footer
+        document.querySelector('.footer').innerHTML = `© ${new Date().getFullYear()} iStore NDS. All rights reserved.`;
+
+        // Generate random invoice number
+        function generateInvoiceNumber() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let invoiceNumber = 'OLU';
+            for (let i = 0; i < 5; i++) {
+                invoiceNumber += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            invoiceNumber += 'BE';
+            return invoiceNumber;
+        }
+
+        // Refresh button functionality
+        document.getElementById('refreshButton').addEventListener('click', function() {
+            // Reset form
+            document.getElementById('olubeForm').reset();
+            
+            // Hide email preview
+            document.getElementById('emailPreview').classList.remove('show');
+            
+            // Hide all warnings
+            document.querySelectorAll('.warning-message').forEach(el => {
+                el.classList.remove('show');
+            });
+            
+            // Add animation to refresh button
+            this.classList.add('fa-spin');
+            setTimeout(() => this.classList.remove('fa-spin'), 800);
+        });
+
+        // Form submission
+        document.getElementById("olubeForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            var customerName = document.getElementById("customerName").value.trim();
+            var amount = document.getElementById("amount").value.trim();
+            
+            // Validate form
+            let isValid = true;
+            
+            if (!customerName) {
+                document.getElementById("nameWarning").classList.add('show');
+                isValid = false;
+            } else {
+                document.getElementById("nameWarning").classList.remove('show');
+            }
+            
+            if (!amount || isNaN(amount)) {
+                document.getElementById("amountWarning").classList.add('show');
+                isValid = false;
+            } else {
+                document.getElementById("amountWarning").classList.remove('show');
+            }
+            
+            if (!isValid) return;
+            
+            // Add animation to generate button
+            const generateButton = document.getElementById("generateButton");
+            generateButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                generateButton.innerHTML = '<i class="fas fa-envelope"></i> Generate Email';
+                
+                // Generate email content
+                const invoiceNumber = generateInvoiceNumber();
+                const subject = "Receipt Confirmation: Payment Received Successfully";
+                const emailBody = `Hi ${customerName},\n\n` +
+                                `We hope you're doing well.\n\n` +
+                                `We're pleased to inform you that we have successfully received your payment of ₹${amount} for your recent purchase from Olube. Thank you for your prompt payment.\n\n` +
+                                `Your account has been updated accordingly. Your invoice number for this transaction is: ${invoiceNumber}. If you have any questions or need further assistance, feel free to reach out to us.\n\n` +
+                                `Once again, we appreciate your business and look forward to serving you in the future.\n\n` +
+                                `Best regards,\nOlube Team 🌟`;
+                
+                // Display email preview
+                document.getElementById("emailSubject").textContent = subject;
+                document.getElementById("emailContent").textContent = emailBody;
+                document.getElementById("emailPreview").classList.add('show');
+                
+                // Scroll to preview
+                document.getElementById("emailPreview").scrollIntoView({ behavior: 'smooth' });
+            }, 800);
+        });
+
+        // Copy functions
+        function copySubject() {
+            const subjectText = document.getElementById("emailSubject").textContent;
+            const button = document.getElementById("copySubjectButton");
+            
+            navigator.clipboard.writeText(subjectText)
+                .then(() => {
+                    // Visual feedback
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    button.classList.add('copy-success');
+                    
+                    // Confetti effect
+                    confetti({
+                        particleCount: 50,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#2196F3', '#64B5F6', '#1976D2']
+                    });
+                    
+                    // Reset button after delay
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="far fa-copy"></i> Copy Subject';
+                        button.classList.remove('copy-success');
+                    }, 2000);
+                })
+                .catch(err => console.error('Failed to copy:', err));
+        }
+
+        function copyToClipboard() {
+            const emailBody = document.getElementById("emailContent").textContent;
+            const button = document.getElementById("copyButton");
+            
+            navigator.clipboard.writeText(emailBody)
+                .then(() => {
+                    // Visual feedback
+                    button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    button.classList.add('copy-success');
+                    
+                    // Confetti effect
+                    confetti({
+                        particleCount: 80,
+                        spread: 90,
+                        origin: { y: 0.6 },
+                        colors: ['#2196F3', '#64B5F6', '#1976D2', '#4CAF50']
+                    });
+                    
+                    // Reset button after delay
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="far fa-copy"></i> Copy Body';
+                        button.classList.remove('copy-success');
+                    }, 2000);
+                })
+                .catch(err => console.error('Failed to copy:', err));
+        }
+
+        // Add event listeners
+        document.getElementById('copySubjectButton').addEventListener('click', copySubject);
+        document.getElementById('copyButton').addEventListener('click', copyToClipboard);
+        
+        // Input field validation on blur
+        document.getElementById('customerName').addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                document.getElementById("nameWarning").classList.add('show');
+            } else {
+                document.getElementById("nameWarning").classList.remove('show');
+            }
+        });
+        
+        document.getElementById('amount').addEventListener('blur', function() {
+            if (!this.value.trim() || isNaN(this.value)) {
+                document.getElementById("amountWarning").classList.add('show');
+            } else {
+                document.getElementById("amountWarning").classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
